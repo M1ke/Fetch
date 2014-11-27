@@ -370,7 +370,7 @@ class Server
     }
 
     function getMessageFromUid($stream,$num){
-    	$uid= imap_uid($stream, $i);
+    	$uid= imap_uid($stream, $num);
     	return new Message($uid, $this);
     }
 

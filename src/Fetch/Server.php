@@ -385,8 +385,13 @@ class Server
 
         $message_nums=imap_sort($stream,SORTDATE,1);
         $messages = array();
+        $n=0;
         foreach ($message_nums as $num) {
             $messages[] = getMessageFromUid($stream,$num);
+            if ($n>$numMessages){
+            	break;
+            }
+            $n++;
         }
 
         return $messages;

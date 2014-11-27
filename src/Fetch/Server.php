@@ -354,13 +354,13 @@ class Server
      */
     public function getMessages($limit = null)
     {
-        $numMessages=getMessagesNum($limit);
+        $numMessages=$this->getNumMessages($limit);
 
         if ($numMessages < 1)
             return array();
 
         $stream   = $this->getImapStream();
-   
+
         $messages = array();
         for ($i = 1; $i <= $numMessages; $i++) {
             $messages[] = getMessageFromUid($stream,$i);
@@ -376,7 +376,7 @@ class Server
 
     public function getMessagesByDate($limit = null)
     {
-        $numMessages=getMessagesNum($limit);
+        $numMessages=$this->getNumMessages($limit);
 
         if ($numMessages < 1)
             return array();
@@ -397,11 +397,13 @@ class Server
         return $messages;
     }
 
-    protected function getMessagesNum($limit=null){
+    protected function getNumMessages($limit=null){
     	$numMessages = $this->numMessages();
 
         if (isset($limit) && is_numeric($limit) && $limit < $numMessages)
             $numMessages = $limit;
+
+        return $numMessages;
     }
 
     /**

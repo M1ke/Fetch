@@ -363,7 +363,7 @@ class Server
 
         $messages = array();
         for ($i = 1; $i <= $numMessages; $i++) {
-            $messages[] = getMessageFromUid($stream,$i);
+            $messages[] = $this->getMessageFromUid($stream,$i);
         }
 
         return $messages;
@@ -387,7 +387,7 @@ class Server
         $messages = array();
         $n=0;
         foreach ($message_nums as $num) {
-            $messages[] = getMessageFromUid($stream,$num);
+            $messages[] = $this->getMessageFromUid($stream,$num);
             if ($n>$numMessages){
             	break;
             }

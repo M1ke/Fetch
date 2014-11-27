@@ -382,17 +382,18 @@ class Server
     		$limit=null;
     	}
 
+        $messages = array();
         $numMessages=$this->getNumMessages($limit);
 
-        if ($numMessages < 1)
-            return array();
+        if ($numMessages < 1){
+            return $messages;
+        }
 
-        $stream  = $this->getImapStream();
+        $stream = $this->getImapStream();
 
         $message_nums=imap_sort($stream,SORTDATE,1);
-        $messages = array();
         $n=0;
-        foreach ($message_nums as $num) {
+        foreach ($message_nums as $num){
             $message = $this->getMessageFromUid($stream,$num);
             if (!empty($limit_by_date) and $message->getDate()<$limit_by_date){
             	break;

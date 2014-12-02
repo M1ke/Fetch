@@ -369,8 +369,12 @@ class Server
         return $messages;
     }
 
-    function getMessageFromUid($stream,$num){
+    public function getMessageFromUid($stream,$num){
     	$uid= imap_uid($stream, $num);
+    	return $this->newMessage($uid, $this);
+    }
+
+    protected function newMessage($uid, Server $server){
     	return new Message($uid, $this);
     }
 

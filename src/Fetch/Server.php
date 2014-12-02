@@ -327,7 +327,7 @@ class Server
             $messages = array();
 
             foreach ($results as $messageId)
-                $messages[] = new Message($messageId, $this);
+                $messages[] = $this->getMessageByUid($messageId, $this);
 
             return $messages;
         } else {
@@ -363,27 +363,23 @@ class Server
 
         $messages = array();
         for ($i = 1; $i <= $numMessages; $i++) {
-            $messages[] = $this->getMessageFromUid($stream,$i);
+            $messages[] = $this->getMessageByNum($stream,$i);
         }
 
         return $messages;
     }
 
-    public function getMessageFromUid($stream,$num){
+    public function getMessageByNum($stream,$num){
     	$uid= imap_uid($stream, $num);
-    	return $this->newMessage($uid, $this);
+    	return $this->getMessageByUid($uid);
     }
 
-    protected function newMessage($uid, Server $server){
-    	return new Message($uid, $this);
-    }
-
-    public function getMessagesByDate($limit = null)
+    public function getMessagesByDate($limit = null, $other_limit=null)
     {
     	$limit_by_date=strtotime($limit);
 
     	if (!empty($limit_by_date)){
-    		$limit=null;
+    		$limit=$other_limit;
     	}
 
         $messages = array();
@@ -398,7 +394,7 @@ class Server
         $message_nums=imap_sort($stream,SORTDATE,1);
         $n=0;
         foreach ($message_nums as $num){
-            $message = $this->getMessageFromUid($stream,$num);
+            $message = $this->getMessageByNum($stream,$num);
             if (!empty($limit_by_date) and $message->getDate()<$limit_by_date){
             	break;
             }

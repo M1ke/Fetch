@@ -81,7 +81,7 @@ class Message
     /**
      * This is an array of the various imap flags that can be set.
      *
-     * @var string
+     * @var array
      */
     protected static $flagTypes = array(self::FLAG_RECENT, self::FLAG_FLAGGED, self::FLAG_ANSWERED, self::FLAG_DELETED, self::FLAG_SEEN, self::FLAG_DRAFT);
 
@@ -207,7 +207,7 @@ class Message
      * through the apprioriate Imap functions.
      *
      * @param int    $messageUniqueId
-     * @param Server $mailbox
+     * @param Server $connection
      */
     public function __construct($messageUniqueId, Server $connection)
     {
@@ -234,7 +234,7 @@ class Message
             return false;
 
         $this->subject = MIME::decode($messageOverview->subject, self::$charset);
-        $this->date    = strtotime($messageOverview->date);
+        $this->parseDate($messageOverview);
         $this->size    = $messageOverview->size;
 
         foreach (self::$flagTypes as $flag)
@@ -799,5 +799,21 @@ class Message
         $this->imapConnection->setMailBox($currentBox);
 
         return $returnValue;
+    }
+
+    /**
+     * @param $messageOverview
+     */
+    protected function parseDate($messageOverview)
+    {
+        $date_string = $messageOverview->date;
+        $date = strtotime($date_string);
+        if (!$date){
+            $date_string = explode(' (', $date_string);
+            $date_string = $date_string[0];
+            $date = strtotime($date_string);
+        }
+
+        $this->date = $date;
     }
 }

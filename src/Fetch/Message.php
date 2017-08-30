@@ -809,9 +809,13 @@ class Message
         $date_string = $messageOverview->date;
         $date = strtotime($date_string);
         if (!$date){
-            $date_string = explode(' (', $date_string);
-            $date_string = $date_string[0];
-            $date = strtotime($date_string);
+            $date_string_split = explode(' (', $date_string);
+            $date_string_mod = $date_string_split[0];
+            $date = strtotime($date_string_mod);
+
+            if (!$date){
+                trigger_error("The date string $date_string could not be parsed into a timestamp", E_USER_NOTICE);
+            }
         }
 
         $this->date = $date;

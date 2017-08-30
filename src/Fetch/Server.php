@@ -409,7 +409,7 @@ class Server
         return $this->getMessageByUid($uid);
     }
 
-    public function getMessagesByDate($limit = null, $other_limit=null)
+    public function getMessagesByDate($limit = null, $other_limit=null, $empty_date_allowed = false)
     {
         $limit_by_date=strtotime($limit);
 
@@ -430,9 +430,14 @@ class Server
         $n=0;
         foreach ($message_nums as $num) {
             $message = $this->getMessageByNum($stream,$num);
-            if (!empty($limit_by_date) and $message->getDate()<$limit_by_date) {
-                break;
+            $message_date = $message->getDate();
+
+            if (!empty($limit_by_date) && $message->getDate()<$limit_by_date) {
+                if ($message_date || !$empty_date_allowed){
+                    break;
+                }
             }
+
             $messages[] = $message;
             if ($n>$numMessages) {
                 break;

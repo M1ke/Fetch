@@ -802,6 +802,12 @@ class Message
     }
 
     /**
+     * This method is an addition to the original library by M1ke
+     * To help certain dates parse which previously did not. It attempts
+     * basic parsing, then for presence of a "udate" element which might
+     * not be in all clients, and then tries some more complex parsing.
+     * If it fails it raises a user notice with some necessary debug info
+     *
      * @param $messageOverview
      * @return int
      */

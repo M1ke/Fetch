@@ -234,7 +234,7 @@ class Message
             return false;
 
         $this->subject = MIME::decode($messageOverview->subject, self::$charset);
-        $this->parseDate($messageOverview);
+        $this->date    = $this->parseDate($messageOverview);
         $this->size    = $messageOverview->size;
 
         foreach (self::$flagTypes as $flag)
@@ -803,21 +803,31 @@ class Message
 
     /**
      * @param $messageOverview
+     * @return int
      */
     protected function parseDate($messageOverview)
     {
         $date_string = $messageOverview->date;
         $date = strtotime($date_string);
-        if (!$date){
-            $date_string_split = explode(' (', $date_string);
-            $date_string_mod = $date_string_split[0];
-            $date = strtotime($date_string_mod);
 
-            if (!$date){
-                trigger_error("The date string $date_string could not be parsed into a timestamp", E_USER_NOTICE);
-            }
+        if ($date){
+            return $date;
         }
 
-        $this->date = $date;
+        if (is_int($messageOverview->udate) && $messageOverview->udate>0){
+            return $messageOverview->udate;
+        }
+
+        $date_string_split = explode(' (', $date_string);
+        $date_string_mod = $date_string_split[0];
+        $date = strtotime($date_string_mod);
+
+        if ($date){
+            return $date;
+        }
+
+        trigger_error("The date string '$date_string' could not be parsed into a timestamp and no 'udate' timestamp field was set. Message overview was: ".json_encode($messageOverview), E_USER_NOTICE);
+
+        return 0;
     }
 }
